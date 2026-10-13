@@ -1,0 +1,5 @@
+# See https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+
+# Prose lines commonly exceed 80 chars (long links, wrapped sentences) -
+# wrapping isn't enforced anywhere else in the repo either.
+MD013: false
