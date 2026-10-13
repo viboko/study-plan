@@ -34,23 +34,20 @@ export function ItemCardBody({ item, variant, problem, locked }: Props) {
     problem ? 'item-problem' : '',
   ];
   const short = SHORT_SUBJECT[item.subject] ?? item.subject;
-  const paper = item.type === 'Paper';
   return (
     <span className={classes.filter(Boolean).join(' ')}>
       {variant === 'chip' ? (
         <span className="item-title">
           {item.completed && '✓ '}
-          <strong>{short}</strong> {paper && '📝 '}
+          <strong>{short}</strong> {item.type === 'Paper' && '📝 '}
           {item.title}
         </span>
       ) : (
         <>
           <span className="item-title">
-            <strong>{item.subject}</strong>
-            {item.category && ` · ${item.category}`}
-            {paper && item.minutes ? ` · ${item.minutes} min paper` : paper ? ' · paper' : ''}
+            <strong>{item.title}</strong>
           </span>
-          <span className="item-title">{item.title}</span>
+          <span className="item-meta">{item.subject}</span>
           <span className="item-meta">{item.book}</span>
           {!!locked && (
             <span className="item-meta">
