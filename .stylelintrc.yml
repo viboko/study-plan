@@ -1,0 +1,5 @@
+extends: stylelint-config-standard
+rules:
+  # Flags unrelated selectors that merely share an element; ordering by
+  # component is clearer here than ordering by specificity.
+  no-descending-specificity: null
