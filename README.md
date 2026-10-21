@@ -9,7 +9,8 @@ mirrors the plan to a Google Calendar per child.
   days as unavailable, or let _Auto-schedule_ spread everything out before
   the final date.
 - **Items** — a filterable table of every session and paper, with quick
-  entry of a whole book's contents ("Add several").
+  entry of a whole book's contents ("Add several sessions" / "Add several
+  papers").
 - **Settings** — children, their final date, daily limit and unavailable
   days, plus the Google connection.
 

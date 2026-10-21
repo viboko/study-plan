@@ -3,7 +3,7 @@ import { BulkAddForm } from '../components/BulkAddForm';
 import { subjectClass } from '../components/ItemCard';
 import { ItemForm, blankItem, withCompleted } from '../components/ItemForm';
 import { formatDate } from '../domain/dates';
-import type { Item } from '../domain/types';
+import type { Item, ItemType } from '../domain/types';
 import { usePlan } from '../state/PlanContext';
 
 type StatusFilter = 'all' | 'unplanned' | 'planned' | 'completed';
@@ -28,7 +28,7 @@ export function ItemsView() {
   const [status, setStatus] = useState<StatusFilter>('all');
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<{ item: Item; isNew: boolean } | null>(null);
-  const [bulk, setBulk] = useState(false);
+  const [bulk, setBulk] = useState<ItemType | null>(null);
 
   if (!child) {
     return <p className="empty">Add a child in Settings to start planning.</p>;
@@ -61,8 +61,11 @@ export function ItemsView() {
         >
           + Add paper
         </button>
-        <button type="button" onClick={() => setBulk(true)}>
-          + Add several
+        <button type="button" onClick={() => setBulk('Session')}>
+          + Add several sessions
+        </button>
+        <button type="button" onClick={() => setBulk('Paper')}>
+          + Add several papers
         </button>
       </div>
       <div className="toolbar">
@@ -179,9 +182,11 @@ export function ItemsView() {
       )}
       {bulk && (
         <BulkAddForm
+          key={bulk}
           child={child.name}
+          type={bulk}
           onSave={(added) => apply({ kind: 'upsertItems', items: added })}
-          onClose={() => setBulk(false)}
+          onClose={() => setBulk(null)}
         />
       )}
     </>
