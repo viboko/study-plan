@@ -1,19 +1,26 @@
 import { useState, type FormEvent } from 'react';
-import { SUBJECTS, type Item } from '../domain/types';
+import { SUBJECTS, type Item, type ItemType } from '../domain/types';
 import { blankItem } from './ItemForm';
 import { Modal } from './Modal';
 
 interface Props {
   child: string;
+  type: ItemType;
   onSave(items: Item[]): void;
   onClose(): void;
 }
 
-/** Add many sessions that share a book, subject and category: one title per line. */
-export function BulkAddForm({ child, onSave, onClose }: Props) {
+/**
+ * Add many sessions or papers that share a book and subject, plus a category
+ * (sessions) or a number of minutes (papers): one title per line.
+ */
+export function BulkAddForm({ child, type, onSave, onClose }: Props) {
+  const isPaper = type === 'Paper';
+  const noun = isPaper ? 'paper' : 'session';
   const [book, setBook] = useState('');
   const [subject, setSubject] = useState<string>(SUBJECTS[0]);
   const [category, setCategory] = useState('');
+  const [minutes, setMinutes] = useState<number | null>(blankItem(child, type).minutes);
   const [titles, setTitles] = useState('');
   const lines = titles
     .split('\n')
@@ -24,10 +31,11 @@ export function BulkAddForm({ child, onSave, onClose }: Props) {
     e.preventDefault();
     onSave(
       lines.map((title) => ({
-        ...blankItem(child, 'Session'),
+        ...blankItem(child, type),
         book: book.trim(),
         subject,
-        category: category.trim(),
+        category: isPaper ? '' : category.trim(),
+        minutes: isPaper ? minutes : null,
         title,
       })),
     );
@@ -35,7 +43,7 @@ export function BulkAddForm({ child, onSave, onClose }: Props) {
   };
 
   return (
-    <Modal title="Add several sessions" onClose={onClose}>
+    <Modal title={`Add several ${noun}s`} onClose={onClose}>
       <form className="form" onSubmit={submit}>
         <label className="wide">
           Book
@@ -49,10 +57,22 @@ export function BulkAddForm({ child, onSave, onClose }: Props) {
             ))}
           </select>
         </label>
-        <label>
-          Category
-          <input value={category} onChange={(e) => setCategory(e.target.value)} />
-        </label>
+        {isPaper ? (
+          <label>
+            Minutes
+            <input
+              type="number"
+              min={1}
+              value={minutes ?? ''}
+              onChange={(e) => setMinutes(e.target.value ? Number(e.target.value) : null)}
+            />
+          </label>
+        ) : (
+          <label>
+            Category
+            <input value={category} onChange={(e) => setCategory(e.target.value)} />
+          </label>
+        )}
         <label className="wide">
           Titles, one per line
           <textarea
@@ -60,7 +80,9 @@ export function BulkAddForm({ child, onSave, onClose }: Props) {
             required
             autoFocus
             value={titles}
-            placeholder={'Parts of Speech\nTenses\nPunctuation'}
+            placeholder={
+              isPaper ? 'Paper 1\nPaper 2\nPaper 3' : 'Parts of Speech\nTenses\nPunctuation'
+            }
             onChange={(e) => setTitles(e.target.value)}
           />
         </label>
@@ -70,7 +92,8 @@ export function BulkAddForm({ child, onSave, onClose }: Props) {
             Cancel
           </button>
           <button type="submit" className="primary" disabled={lines.length === 0}>
-            Add {lines.length || ''} session{lines.length === 1 ? '' : 's'}
+            Add {lines.length || ''} {noun}
+            {lines.length === 1 ? '' : 's'}
           </button>
         </footer>
       </form>

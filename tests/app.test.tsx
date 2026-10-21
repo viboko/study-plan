@@ -54,6 +54,25 @@ describe('App in demo mode', () => {
     expect(screen.getByRole('heading', { name: 'Problems (0)' })).toBeTruthy();
   });
 
+  it('adds several papers with shared minutes', async () => {
+    const user = await openDemo();
+    await user.click(screen.getByRole('link', { name: 'Items' }));
+    await user.click(screen.getByRole('button', { name: '+ Add several papers' }));
+    const dialog = screen.getByRole('dialog');
+    expect(within(dialog).queryByLabelText('Category')).toBeNull();
+    const minutes = within(dialog).getByLabelText('Minutes');
+    await user.clear(minutes);
+    await user.type(minutes, '45');
+    await user.type(within(dialog).getByLabelText('Titles, one per line'), 'Mock A{Enter}Mock B');
+    await user.click(within(dialog).getByRole('button', { name: 'Add 2 papers' }));
+
+    for (const title of ['Mock A', 'Mock B']) {
+      const row = screen.getByRole('button', { name: title }).closest('tr')!;
+      expect(within(row).getByText('Paper')).toBeTruthy();
+      expect(within(row).getByText('45 min')).toBeTruthy();
+    }
+  });
+
   it('switches child', async () => {
     const user = await openDemo();
     await user.click(screen.getByRole('tab', { name: 'Ben' }));
