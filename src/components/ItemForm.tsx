@@ -46,6 +46,33 @@ function unique(values: string[]): string[] {
   return [...new Set(values.filter(Boolean))].sort();
 }
 
+/** A book field that suggests the books already used in `items`. */
+export function BookInput({
+  value,
+  items,
+  onChange,
+}: {
+  value: string;
+  items: Item[];
+  onChange(book: string): void;
+}) {
+  return (
+    <>
+      <input
+        value={value}
+        list="book-options"
+        placeholder="e.g. Bond 11+ Non-verbal Reasoning 10-11"
+        onChange={(e) => onChange(e.target.value)}
+      />
+      <datalist id="book-options">
+        {unique(items.map((i) => i.book)).map((b) => (
+          <option key={b} value={b} />
+        ))}
+      </datalist>
+    </>
+  );
+}
+
 export function ItemForm({ item, isNew, items, onSave, onDelete, onClose }: Props) {
   const [draft, setDraft] = useState(item);
   const set = (changes: Partial<Item>) => setDraft((d) => ({ ...d, ...changes }));
@@ -93,17 +120,7 @@ export function ItemForm({ item, isNew, items, onSave, onDelete, onClose }: Prop
         </label>
         <label className="wide">
           Book
-          <input
-            value={draft.book}
-            list="book-options"
-            placeholder="e.g. Bond 11+ Non-verbal Reasoning 10-11"
-            onChange={(e) => set({ book: e.target.value })}
-          />
-          <datalist id="book-options">
-            {unique(items.map((i) => i.book)).map((b) => (
-              <option key={b} value={b} />
-            ))}
-          </datalist>
+          <BookInput value={draft.book} items={items} onChange={(book) => set({ book })} />
         </label>
         {isPaper ? (
           <label>

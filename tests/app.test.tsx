@@ -73,6 +73,15 @@ describe('App in demo mode', () => {
     }
   });
 
+  it('suggests existing books when adding several sessions', async () => {
+    const user = await openDemo();
+    await user.click(screen.getByRole('link', { name: 'Items' }));
+    await user.click(screen.getByRole('button', { name: '+ Add several sessions' }));
+    const book = within(screen.getByRole('dialog')).getByLabelText('Book') as HTMLInputElement;
+    const options = [...book.list!.querySelectorAll('option')].map((o) => o.value);
+    expect(options.length).toBeGreaterThan(0);
+  });
+
   it('switches child', async () => {
     const user = await openDemo();
     await user.click(screen.getByRole('tab', { name: 'Ben' }));

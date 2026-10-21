@@ -1,11 +1,13 @@
 import { useState, type FormEvent } from 'react';
 import { SUBJECTS, type Item, type ItemType } from '../domain/types';
-import { blankItem } from './ItemForm';
+import { BookInput, blankItem } from './ItemForm';
 import { Modal } from './Modal';
 
 interface Props {
   child: string;
   type: ItemType;
+  /** The child's items, for book autocomplete. */
+  items: Item[];
   onSave(items: Item[]): void;
   onClose(): void;
 }
@@ -14,7 +16,7 @@ interface Props {
  * Add many sessions or papers that share a book and subject, plus a category
  * (sessions) or a number of minutes (papers): one title per line.
  */
-export function BulkAddForm({ child, type, onSave, onClose }: Props) {
+export function BulkAddForm({ child, type, items, onSave, onClose }: Props) {
   const isPaper = type === 'Paper';
   const noun = isPaper ? 'paper' : 'session';
   const [book, setBook] = useState('');
@@ -47,7 +49,7 @@ export function BulkAddForm({ child, type, onSave, onClose }: Props) {
       <form className="form" onSubmit={submit}>
         <label className="wide">
           Book
-          <input value={book} onChange={(e) => setBook(e.target.value)} />
+          <BookInput value={book} items={items} onChange={setBook} />
         </label>
         <label>
           Subject
