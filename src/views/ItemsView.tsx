@@ -185,6 +185,7 @@ export function ItemsView() {
           key={bulk}
           child={child.name}
           type={bulk}
+          items={items}
           onSave={(added) => apply({ kind: 'upsertItems', items: added })}
           onClose={() => setBulk(null)}
         />
